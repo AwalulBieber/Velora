@@ -167,6 +167,37 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                 )
             }
         }
+        if (host.platform == SettingsPlatform.ANDROID) {
+            group("dynamicIsland", "Dynamic Island") {
+                switch(
+                    id = "veloraDynamicIslandEnabled",
+                    title = "Enable Dynamic Island",
+                    description = "Show a floating now-playing pill at the top of Velora.",
+                    checked = settings.veloraDynamicIslandEnabled,
+                ) { settings.veloraDynamicIslandEnabled = it }
+                choice(
+                    id = "veloraDynamicIslandStyle",
+                    title = "Island size",
+                    valueLabel = if (settings.veloraDynamicIslandStyle == "EXPANDED") "Expanded" else "Compact",
+                    choices = listOf(
+                        SettingsChoice("COMPACT", "Compact"),
+                        SettingsChoice("EXPANDED", "Expanded"),
+                    ),
+                    selectedChoiceId = settings.veloraDynamicIslandStyle,
+                    description = "Choose how much song information the island displays.",
+                ) { settings.veloraDynamicIslandStyle = it }
+                switch(
+                    id = "veloraDynamicIslandShowArtwork",
+                    title = "Show album artwork",
+                    checked = settings.veloraDynamicIslandShowArtwork,
+                ) { settings.veloraDynamicIslandShowArtwork = it }
+                switch(
+                    id = "veloraDynamicIslandShowControls",
+                    title = "Show playback controls",
+                    checked = settings.veloraDynamicIslandShowControls,
+                ) { settings.veloraDynamicIslandShowControls = it }
+            }
+        }
         if (host.platform == SettingsPlatform.DESKTOP) {
             group("libraryGrid", stringResource(Res.string.library)) {
                 choice(
