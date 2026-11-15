@@ -9,6 +9,7 @@ import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.model.SortDirection
 import com.metrolist.shared.model.filterAndSortHistory
 import com.metrolist.shared.settings.BlockedContent
+import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.state.GlobalYouTubeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -397,6 +398,8 @@ data class ListeningStreakStats(
     val currentDays: Int,
     val longestDays: Int,
     val listenedToday: Boolean,
+    val recoveriesUsed: Int = 0,
+    val canRecover: Boolean = false,
 )
 
 internal fun calculateListeningStreak(
@@ -411,29 +414,70 @@ internal fun calculateListeningStreak(
         longest = maxOf(longest, run)
         previous = date
     }
-
     var cursor = if (today in playedDates) today else today.minus(1, DateTimeUnit.DAY)
     var current = 0
     while (cursor in playedDates) {
         current++
         cursor = cursor.minus(1, DateTimeUnit.DAY)
     }
+    return ListeningStreakStats(current, longest, today in playedDates)
+}
 
-    return ListeningStreakStats(
-        currentDays = current,
-        longestDays = longest,
-        listenedToday = today in playedDates,
-    )
+private fun completedStreakDates(): MutableSet<LocalDate> =
+    Settings.shared.listeningStreakCompletedDates
+        .split(',')
+        .mapNotNull { value -> value.takeIf(String::isNotBlank)?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
+        .toMutableSet()
+
+fun recordCompletedListeningStreakDay(date: LocalDate) {
+    val dates = completedStreakDates()
+    dates += date
+    Settings.shared.listeningStreakCompletedDates = dates.sorted().joinToString(",")
+}
+
+data class ListeningStreakRecoveryStatus(
+    val usedThisMonth: Int,
+    val remainingThisMonth: Int,
+    val canRecover: Boolean,
+)
+
+private fun recoveryUsage(today: LocalDate): Int {
+    val parts = Settings.shared.listeningStreakRecoveryState.split('|')
+    return if (parts.firstOrNull() == today.toString().take(7)) parts.getOrNull(1)?.toIntOrNull()?.coerceIn(0, 5) ?: 0 else 0
+}
+
+fun listeningStreakRecoveryStatus(today: LocalDate): ListeningStreakRecoveryStatus {
+    val dates = completedStreakDates()
+    val lastDate = dates.filter { it <= today }.maxOrNull()
+    val broken = lastDate != null && lastDate < today.minus(1, DateTimeUnit.DAY)
+    val used = recoveryUsage(today)
+    return ListeningStreakRecoveryStatus(used, 5 - used, broken && used < 5)
+}
+
+fun recoverListeningStreak(today: LocalDate): Boolean {
+    val dates = completedStreakDates()
+    val lastDate = dates.filter { it <= today }.maxOrNull() ?: return false
+    if (lastDate >= today.minus(1, DateTimeUnit.DAY)) return false
+    val used = recoveryUsage(today)
+    if (used >= 5) return false
+    var cursor = lastDate.plus(1, DateTimeUnit.DAY)
+    val yesterday = today.minus(1, DateTimeUnit.DAY)
+    while (cursor <= yesterday) {
+        dates += cursor
+        cursor = cursor.plus(1, DateTimeUnit.DAY)
+    }
+    Settings.shared.listeningStreakCompletedDates = dates.sorted().joinToString(",")
+    Settings.shared.listeningStreakRecoveryState = "${today.toString().take(7)}|${used + 1}"
+    return true
 }
 
 suspend fun MusicDatabase.listeningStreakStats(
     clock: kotlin.time.Clock = kotlin.time.Clock.System,
 ): ListeningStreakStats {
-    val now = clock.now()
-    val today = now.toLocalDateTime(TimeZone.currentSystemDefault()).date
-    val buckets = historyTimeBuckets(Long.MIN_VALUE, now.toEpochMilliseconds(), hourly = false, localTime = true, catalogArtistIds = true)
-    val dates = buckets.mapNotNull { bucket -> runCatching { LocalDate.parse(bucket.bucket) }.getOrNull() }.toSet()
-    return calculateListeningStreak(dates, today)
+    val today = clock.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val base = calculateListeningStreak(completedStreakDates(), today)
+    val recovery = listeningStreakRecoveryStatus(today)
+    return base.copy(recoveriesUsed = recovery.usedThisMonth, canRecover = recovery.canRecover)
 }
 
 data class HistoryStatisticsSnapshot(
