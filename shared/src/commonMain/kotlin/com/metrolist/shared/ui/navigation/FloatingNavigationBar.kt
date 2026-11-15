@@ -11,7 +11,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,10 +39,13 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
@@ -49,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.metrolist.shared.ui.components.focusOutline
+import kotlin.math.abs
 
 val LocalFloatingNavBar = compositionLocalOf { false }
 
@@ -108,12 +114,32 @@ private fun <T> FloatingNavigationBar(
 ) {
     val pillItems = items.filter { it.key != separateKey }
     val separateItem = items.firstOrNull { it.key == separateKey }
+    var dragDistance by remember { mutableFloatStateOf(0f) }
+    val swipeThreshold = with(LocalDensity.current) { 48.dp.toPx() }
 
     Row(
         modifier =
             modifier
                 .wrapContentWidth()
                 .windowInsetsPadding(ShortNavigationBarDefaults.windowInsets)
+                .pointerInput(items, selectedKey) {
+                    detectHorizontalDragGestures(
+                        onHorizontalDrag = { change, dragAmount ->
+                            change.consume()
+                            dragDistance += dragAmount
+                        },
+                        onDragEnd = {
+                            val currentIndex = items.indexOfFirst { it.key == selectedKey }
+                            if (currentIndex >= 0 && abs(dragDistance) >= swipeThreshold) {
+                                val direction = if (dragDistance < 0f) 1 else -1
+                                val nextIndex = (currentIndex + direction).coerceIn(items.indices)
+                                if (nextIndex != currentIndex) onSelect(items[nextIndex].key)
+                            }
+                            dragDistance = 0f
+                        },
+                        onDragCancel = { dragDistance = 0f },
+                    )
+                }
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -121,9 +147,10 @@ private fun <T> FloatingNavigationBar(
         Surface(
             modifier = Modifier.wrapContentWidth().height(FloatingBarHeight),
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainer,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.78f),
             contentColor = MaterialTheme.colorScheme.onSurface,
             shadowElevation = FloatingBarShadow,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.42f)),
         ) {
             Row(
                 modifier = Modifier.wrapContentWidth().padding(horizontal = 8.dp),
@@ -144,7 +171,7 @@ private fun <T> FloatingNavigationBar(
         if (separateItem != null) {
             val selected = separateItem.key == selectedKey
             val container by animateColorAsState(
-                if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer,
+                if (selected) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.88f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.78f),
                 label = "floatingSearchContainer",
             )
             val content by animateColorAsState(
@@ -158,6 +185,7 @@ private fun <T> FloatingNavigationBar(
                 color = container,
                 contentColor = content,
                 shadowElevation = FloatingBarShadow,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.42f)),
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                     Icon(
@@ -178,7 +206,7 @@ private fun <T> FloatingNavigationItem(
     modifier: Modifier = Modifier,
 ) {
     val indicator by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0f),
+        if (selected) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.88f) else MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0f),
         label = "floatingItemIndicator",
     )
     val contentColor by animateColorAsState(
