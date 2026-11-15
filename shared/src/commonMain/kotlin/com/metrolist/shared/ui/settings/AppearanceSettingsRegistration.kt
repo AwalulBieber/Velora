@@ -563,6 +563,23 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
             icon = MetrolistIcons.Outlined.Tune,
             tone = SettingsTone.ORANGE,
         ) {
+            group("fontWeight", stringResource(Res.string.app_font_weight)) {
+                inlineSlider(
+                    id = "appFontWeightAdjustment",
+                    title = stringResource(Res.string.app_font_weight),
+                    description = stringResource(Res.string.app_font_weight_description),
+                    valueLabel =
+                        if (settings.appFontWeightAdjustment == 0) {
+                            stringResource(Res.string.app_font_weight_default)
+                        } else {
+                            stringResource(Res.string.app_font_weight_adjustment, settings.appFontWeightAdjustment)
+                        },
+                    value = settings.appFontWeightAdjustment.toFloat().coerceIn(-300f, 300f),
+                    defaultValue = 0f,
+                    range = -300f..300f,
+                    steps = 11,
+                ) { settings.appFontWeightAdjustment = it.roundToInt().coerceIn(-300, 300) }
+            }
             if (host.fontPrimaryActions.isNotEmpty()) {
                 group("fonts", stringResource(Res.string.fonts)) {
                     host.fontPrimaryActions.forEach { item ->

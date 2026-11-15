@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import com.metrolist.android.utils.AppFontManager
 import com.metrolist.android.utils.QuickFontManager
 import com.metrolist.shared.settings.FontOption
@@ -30,26 +31,30 @@ fun getAppTypography(): Typography {
         value = withContext(Dispatchers.IO) { resolveFontFamily(context, appFont, customFontFile, activeFontId) }
     }
     val typography = MetrolistTypography()
+    val weightAdjustment = Settings.shared.appFontWeightAdjustment
 
     return Typography(
         fontFamily = font,
-        displayLarge = typography.displayLarge.copy(fontFamily = font),
-        displayMedium = typography.displayMedium.copy(fontFamily = font),
-        displaySmall = typography.displaySmall.copy(fontFamily = font),
-        headlineLarge = typography.headlineLarge.copy(fontFamily = font),
-        headlineMedium = typography.headlineMedium.copy(fontFamily = font),
-        headlineSmall = typography.headlineSmall.copy(fontFamily = font),
-        titleLarge = typography.titleLarge.copy(fontFamily = font),
-        titleMedium = typography.titleMedium.copy(fontFamily = font),
-        titleSmall = typography.titleSmall.copy(fontFamily = font),
-        bodyLarge = typography.bodyLarge.copy(fontFamily = font),
-        bodyMedium = typography.bodyMedium.copy(fontFamily = font),
-        bodySmall = typography.bodySmall.copy(fontFamily = font),
-        labelLarge = typography.labelLarge.copy(fontFamily = font),
-        labelMedium = typography.labelMedium.copy(fontFamily = font),
-        labelSmall = typography.labelSmall.copy(fontFamily = font),
+        displayLarge = typography.displayLarge.copy(fontFamily = font, fontWeight = typography.displayLarge.fontWeight.adjusted(weightAdjustment)),
+        displayMedium = typography.displayMedium.copy(fontFamily = font, fontWeight = typography.displayMedium.fontWeight.adjusted(weightAdjustment)),
+        displaySmall = typography.displaySmall.copy(fontFamily = font, fontWeight = typography.displaySmall.fontWeight.adjusted(weightAdjustment)),
+        headlineLarge = typography.headlineLarge.copy(fontFamily = font, fontWeight = typography.headlineLarge.fontWeight.adjusted(weightAdjustment)),
+        headlineMedium = typography.headlineMedium.copy(fontFamily = font, fontWeight = typography.headlineMedium.fontWeight.adjusted(weightAdjustment)),
+        headlineSmall = typography.headlineSmall.copy(fontFamily = font, fontWeight = typography.headlineSmall.fontWeight.adjusted(weightAdjustment)),
+        titleLarge = typography.titleLarge.copy(fontFamily = font, fontWeight = typography.titleLarge.fontWeight.adjusted(weightAdjustment)),
+        titleMedium = typography.titleMedium.copy(fontFamily = font, fontWeight = typography.titleMedium.fontWeight.adjusted(weightAdjustment)),
+        titleSmall = typography.titleSmall.copy(fontFamily = font, fontWeight = typography.titleSmall.fontWeight.adjusted(weightAdjustment)),
+        bodyLarge = typography.bodyLarge.copy(fontFamily = font, fontWeight = typography.bodyLarge.fontWeight.adjusted(weightAdjustment)),
+        bodyMedium = typography.bodyMedium.copy(fontFamily = font, fontWeight = typography.bodyMedium.fontWeight.adjusted(weightAdjustment)),
+        bodySmall = typography.bodySmall.copy(fontFamily = font, fontWeight = typography.bodySmall.fontWeight.adjusted(weightAdjustment)),
+        labelLarge = typography.labelLarge.copy(fontFamily = font, fontWeight = typography.labelLarge.fontWeight.adjusted(weightAdjustment)),
+        labelMedium = typography.labelMedium.copy(fontFamily = font, fontWeight = typography.labelMedium.fontWeight.adjusted(weightAdjustment)),
+        labelSmall = typography.labelSmall.copy(fontFamily = font, fontWeight = typography.labelSmall.fontWeight.adjusted(weightAdjustment)),
     )
 }
+
+private fun FontWeight?.adjusted(adjustment: Int): FontWeight? =
+    this?.let { FontWeight((it.weight + adjustment).coerceIn(100, 900)) }
 
 private fun resolveFontFamily(
     context: Context,
