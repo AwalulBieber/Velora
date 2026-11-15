@@ -203,6 +203,7 @@ import com.metrolist.android.ui.screens.BrowseScreen
 import com.metrolist.android.ui.screens.DownloadsScreen
 import com.metrolist.android.ui.screens.HistoryScreen
 import com.metrolist.android.ui.screens.HomeScreen
+import com.metrolist.android.ui.screens.YouScreen
 import com.metrolist.android.ui.screens.HomeSectionScreen
 import com.metrolist.android.ui.screens.IntegrationsScreen
 import com.metrolist.android.ui.screens.LibraryScreen
@@ -317,6 +318,7 @@ import com.metrolist.shared.ui.components.PopupContent
 import com.metrolist.shared.ui.components.PopupVisibility
 import com.metrolist.shared.ui.components.images.AsyncImage
 import com.metrolist.shared.ui.components.lyrics.LyricsTranslationSnackbar
+import com.metrolist.shared.ui.equalizer.MetroEqScreen
 import com.metrolist.shared.ui.components.rememberBottomSheetState
 import com.metrolist.shared.ui.design.expressive.components.ExpressiveMiniPlayerHeight
 import com.metrolist.shared.ui.haptics.HapticEvent
@@ -474,7 +476,7 @@ fun MetrolistApp(
             onRejectPairing = AndroidDeviceConnect.manager::rejectPairing,
         )
         val initialStartRoute = remember { resolveAndPersistStartupScreen() }
-        val topLevelRoutes = remember { setOf(Screen.Home, Screen.Search, Screen.Library, Screen.EasterEgg) }
+        val topLevelRoutes = remember { setOf(Screen.Home, Screen.Search, Screen.Library, Screen.You) }
         val navigationState =
             key(navigationSaveKey) {
                 rememberNavigationState(
@@ -2390,7 +2392,7 @@ fun resolveAndPersistStartupScreen(): Screen {
 
 fun NavKey.isVisibleNavigationScreen(): Boolean =
     when (this) {
-        Screen.Home, Screen.Search, Screen.Library, Screen.EasterEgg -> true
+        Screen.Home, Screen.Search, Screen.Library, Screen.EasterEgg, Screen.You -> true
         else -> false
     }
 
@@ -2437,6 +2439,24 @@ fun getEntryProvider(
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(Res.string.mysterious_fourth_tab_description))
             }
+        }
+
+        entry<Screen.You>(metadata = navTabMetadata) {
+            YouScreen(
+                isLoggedIn = authManager.isLoggedIn,
+                onHistory = { navigator.navigate(Screen.History) },
+                onStatistics = { navigator.navigate(Screen.Statistics) },
+                onListenTogether = { navigator.navigate(Screen.ListenTogether) },
+                onRecognition = { navigator.navigate(Screen.Recognition) },
+                onEqualizer = { navigator.navigate(Screen.Equalizer) },
+                onLogin = { navigator.navigate(Screen.Login) },
+                onSettings = { navigator.navigate(Screen.Settings) },
+                onAbout = { navigator.navigate(Screen.About) },
+            )
+        }
+
+        entry<Screen.Equalizer>(metadata = navTabMetadata) {
+            MetroEqScreen()
         }
 
         entry<Screen.HomeSection>(metadata = navTabMetadata + detailViewModelMetadata) { section ->

@@ -13,6 +13,7 @@
     <!-- Translators: Apple mobile platform name displayed in application information. -->
     <!-- Translators: Navigation label for home in the multiple app screens. -->
     <string name="home">Home</string>
+    <string name="you">You</string>
     <!-- Translators: Label for offline mode in the app-wide dialogs. -->
     <string name="offline_mode">Offline mode</string>
     <!-- Translators: Label for songs in the multiple app screens. -->

@@ -42,6 +42,7 @@ import com.metrolist.shared.generated.resources.menu_history
 import com.metrolist.shared.generated.resources.mysterious_fourth_tab
 import com.metrolist.shared.generated.resources.recognize_nearby_music
 import com.metrolist.shared.generated.resources.search
+import com.metrolist.shared.generated.resources.you
 import com.metrolist.shared.generated.resources.settings
 import com.metrolist.shared.generated.resources.statistics
 import com.metrolist.shared.settings.Settings
@@ -72,6 +73,7 @@ val Screen.labelRes: StringResource?
             Screen.Library -> Res.string.filter_library
             Screen.Search -> Res.string.search
             Screen.EasterEgg -> Res.string.mysterious_fourth_tab
+            Screen.You -> Res.string.you
             Screen.Settings -> Res.string.settings
             Screen.History -> Res.string.menu_history
             Screen.Statistics -> Res.string.statistics
@@ -85,6 +87,7 @@ val Screen.icon: ImageVector?
             Screen.Home -> MetrolistIcons.Outlined.Home
             Screen.Library -> MetrolistIcons.Outlined.LibraryMusic
             Screen.Search -> MetrolistIcons.Outlined.Search
+            Screen.You -> MetrolistIcons.Outlined.Person
             Screen.Settings -> MetrolistIcons.Outlined.Settings
             Screen.History -> MetrolistIcons.Outlined.History
             Screen.Statistics -> MetrolistIcons.Outlined.SsidChart
@@ -99,6 +102,7 @@ val Screen.iconFilled: ImageVector?
             Screen.Library -> MetrolistIcons.Filled.LibraryMusic
             Screen.Search -> MetrolistIcons.Filled.Search
             Screen.EasterEgg -> MetrolistIcons.Filled.QuestionMark
+            Screen.You -> MetrolistIcons.Filled.Person
             Screen.Settings -> MetrolistIcons.Filled.Settings
             Screen.History -> MetrolistIcons.Filled.History
             Screen.Statistics -> MetrolistIcons.Filled.SsidChart
@@ -253,9 +257,9 @@ fun MetrolistNavigationScaffold(
 private fun floatingNavigationItems(): List<Screen> =
     buildList {
         if (Settings.shared.showBottomNavHome) add(Screen.Home)
-        if (Settings.shared.showBottomNavLibrary) add(Screen.Library)
         if (Settings.shared.showBottomNavSearch) add(Screen.Search)
-        if (isEmpty()) add(Screen.EasterEgg)
+        if (Settings.shared.showBottomNavLibrary) add(Screen.Library)
+        add(Screen.You)
     }
 
 private fun visibleNavigationItems(): List<Screen> =
@@ -263,7 +267,7 @@ private fun visibleNavigationItems(): List<Screen> =
         if (Settings.shared.showBottomNavHome) add(Screen.Home)
         if (Settings.shared.showBottomNavSearch) add(Screen.Search)
         if (Settings.shared.showBottomNavLibrary) add(Screen.Library)
-        if (isEmpty()) add(Screen.EasterEgg)
+        add(Screen.You)
     }
 
 private fun Modifier.navigationLongPress(
