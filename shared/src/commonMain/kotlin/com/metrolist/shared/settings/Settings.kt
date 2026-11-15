@@ -300,6 +300,7 @@ class Settings(
 
     var materialYouEnabled by preference(true)
     var uiEnhancements by preference(true)
+    var veloraIosStyleAnimations by preference("veloraIosStyleAnimations", true)
     var dynamicTheme by preference(true)
     var themeMode by preference(ThemeMode.AUTO)
     var autoPureBlack by preference(AutoPureBlackKey, false)
