@@ -55,6 +55,7 @@ import com.metrolist.shared.equalizer.AudioSpectrumMeter
 import com.metrolist.shared.equalizer.EqualizerProfiles
 import com.metrolist.shared.model.MUSIC_VIDEO_TYPE_LIVE
 import com.metrolist.shared.model.SongItem
+import com.metrolist.shared.db.recordCompletedListeningStreakDay
 import com.metrolist.shared.model.isLive
 import com.metrolist.shared.playback.MusicQueue
 import com.metrolist.shared.playback.MusicQueueSnapshot
@@ -93,6 +94,9 @@ import com.metrolist.shared.youtube.playback.sabrAudioPlaybackChunks
 import com.metrolist.shared.youtube.playback.toPlaybackLogDetails
 import com.metrolist.shared.youtube.playback.withClientPlaybackNonce
 import io.ktor.client.HttpClient
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -3089,6 +3093,11 @@ class ExoPlaybackPlayer(
         if (eofInstance != currentInstance || lastEofInstance == currentInstance) return
         val completedInstance = currentInstance
         lastEofInstance = completedInstance
+        currentSongValue?.takeIf { !it.isLive }?.let {
+            recordCompletedListeningStreakDay(
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+            )
+        }
         startPreloadedNextAtEof?.invoke(completedInstance)
         playbackReporter.onPlaybackEnded(completedInstance, exo.currentPosition.coerceAtLeast(0L))
         onEOFPlaybackInstanceState.tryEmit(completedInstance)
