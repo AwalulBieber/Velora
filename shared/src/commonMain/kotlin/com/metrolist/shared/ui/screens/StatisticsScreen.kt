@@ -74,6 +74,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -403,17 +404,28 @@ fun StatisticsScreen(
                                         }
                                         state.listeningStreak?.let { streak ->
                                             item {
+                                                val streakColor = listeningStreakMilestoneColor(maxOf(streak.currentDays, streak.longestDays))
                                                 StatisticsCard("Listening streak") {
                                                     Row(
                                                         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                                                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                                                     ) {
                                                         Column(Modifier.weight(1f)) {
-                                                            Text("🔥 ${streak.currentDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                                                            Text(
+                                                                "🔥 ${streak.currentDays} days",
+                                                                style = MaterialTheme.typography.headlineSmall,
+                                                                fontWeight = FontWeight.Bold,
+                                                                color = streakColor,
+                                                            )
                                                             Text(if (streak.listenedToday) "Streak active today" else "Play a song to continue", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         }
                                                         Column(Modifier.weight(1f)) {
-                                                            Text("${streak.longestDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                                                            Text(
+                                                                "${streak.longestDays} days",
+                                                                style = MaterialTheme.typography.headlineSmall,
+                                                                fontWeight = FontWeight.Bold,
+                                                                color = streakColor,
+                                                            )
                                                             Text("Longest streak", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         }
                                                     }
@@ -986,3 +998,23 @@ private fun StatisticsCarousel(
         }
     }
 }
+
+
+/** Color progression for earned listening-streak milestones (3 to 1,000 days). */
+private fun listeningStreakMilestoneColor(days: Int): Color =
+    when {
+        days >= 1000 -> Color(0xFF3D5AFE)
+        days >= 900 -> Color(0xFF3F51B5)
+        days >= 800 -> Color(0xFF2196F3)
+        days >= 700 -> Color(0xFF03A9F4)
+        days >= 600 -> Color(0xFF00BCD4)
+        days >= 500 -> Color(0xFF009688)
+        days >= 400 -> Color(0xFF4CAF50)
+        days >= 300 -> Color(0xFF8BC34A)
+        days >= 200 -> Color(0xFFCDDC39)
+        days >= 100 -> Color(0xFFFFC107)
+        days >= 50 -> Color(0xFFFF9800)
+        days >= 10 -> Color(0xFFFF5722)
+        days >= 3 -> Color(0xFFF44336)
+        else -> Color(0xFF9E9E9E)
+    }
