@@ -75,7 +75,14 @@ internal fun MobileStatisticsScreen(
             loadFailed = false
             try {
                 snapshot = database.loadMobileStatistics(period, dateRange = dateRange, mode = mode)
-                streakStats = database.listeningStreakStats()
+                streakStats =
+                    try {
+                        database.listeningStreakStats()
+                    } catch (error: CancellationException) {
+                        throw error
+                    } catch (_: Exception) {
+                        null
+                    }
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
