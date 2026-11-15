@@ -423,6 +423,9 @@ fun StatisticsScreen(
                                                         }
                                                         Text("View streak calendar  →", style = MaterialTheme.typography.labelLarge, color = streakColor)
                                                     }
+                                                }
+                                            }
+                                        }
 
                                         item { StatisticsCard(stringResource(Res.string.statistics_overview)) { SummaryGrid(state) } }
                                         item {
