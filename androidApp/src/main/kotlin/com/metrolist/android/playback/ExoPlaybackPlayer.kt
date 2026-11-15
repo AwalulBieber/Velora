@@ -57,6 +57,7 @@ import com.metrolist.shared.model.MUSIC_VIDEO_TYPE_LIVE
 import com.metrolist.shared.model.SongItem
 import com.metrolist.shared.db.recordCompletedListeningStreakDay
 import com.metrolist.shared.model.isLive
+import com.metrolist.shared.model.isVideoSong
 import com.metrolist.shared.playback.MusicQueue
 import com.metrolist.shared.playback.MusicQueueSnapshot
 import com.metrolist.shared.playback.PlaybackFailure
@@ -3093,7 +3094,7 @@ class ExoPlaybackPlayer(
         if (eofInstance != currentInstance || lastEofInstance == currentInstance) return
         val completedInstance = currentInstance
         lastEofInstance = completedInstance
-        currentSongValue?.takeIf { !it.isLive }?.let {
+        currentSongValue?.takeIf { !it.isLive && !it.isVideoSong }?.let {
             recordCompletedListeningStreakDay(
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
             )
