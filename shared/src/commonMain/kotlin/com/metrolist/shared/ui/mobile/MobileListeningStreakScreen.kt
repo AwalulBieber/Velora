@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,10 +45,10 @@ import com.metrolist.shared.db.listeningStreakRecoveryStatus
 import com.metrolist.shared.db.recoverListeningStreak
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
@@ -68,6 +69,7 @@ internal fun MobileListeningStreakScreen(
     var recoveryUsed by remember { mutableStateOf(0) }
     var recoveryRemaining by remember { mutableStateOf(5) }
     var canRecover by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(database) {
         database.historyChanges().collectLatest {
@@ -244,9 +246,7 @@ internal fun MobileListeningStreakScreen(
                             recoveryUsed = listeningStreakRecoveryStatus(today).usedThisMonth
                             recoveryRemaining = 5 - recoveryUsed
                             canRecover = false
-                            kotlinx.coroutines.MainScope().launch {
-                                stats = database.listeningStreakStats()
-                            }
+                            scope.launch { stats = database.listeningStreakStats() }
                         }
                         recoveryDialog = false
                     }) { Text("Pulihkan") }
