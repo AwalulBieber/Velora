@@ -224,7 +224,7 @@ internal fun MobileListeningStreakScreen(
             ) {
                 Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text("Streak recovery", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text("$recoveryRemaining of 5 recoveries remaining this month", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("$recoveryUsed used · $recoveryRemaining of 5 remaining this month", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (canRecover) {
                         TextButton(onClick = { recoveryDialog = true }) { Text("Pulihkan Streak") }
                     } else if (recoveryRemaining == 0) {
@@ -246,6 +246,7 @@ internal fun MobileListeningStreakScreen(
                             recoveryUsed = listeningStreakRecoveryStatus(today).usedThisMonth
                             recoveryRemaining = 5 - recoveryUsed
                             canRecover = false
+                            activity = completedListeningStreakDates().associate { it.toString() to 1 }
                             scope.launch { stats = database.listeningStreakStats() }
                         }
                         recoveryDialog = false
