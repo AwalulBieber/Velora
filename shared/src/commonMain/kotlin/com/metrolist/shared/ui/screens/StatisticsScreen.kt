@@ -89,6 +89,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.metrolist.shared.db.ListeningStreakStats
 import com.metrolist.shared.constants.CarouselItemCornerRadius
 import com.metrolist.shared.constants.GridTileSpacing
 import com.metrolist.shared.constants.ListThumbnailSize
@@ -196,6 +197,7 @@ data class StatisticsUiState(
     val mode: StatisticsPeriodMode = StatisticsPeriodMode.CONTINUOUS,
     val totalPlays: Int = 0,
     val totalTimeMs: Long = 0L,
+    val listeningStreak: ListeningStreakStats? = null,
     val artistCount: Int = 0,
     val albumCount: Int = 0,
     val dailyStats: Map<String, Int> = emptyMap(),
@@ -398,6 +400,25 @@ fun StatisticsScreen(
                                             StatisticsCarousel(artistCount(state.artistCount), state.artists, artistsState, onItemClick, {
                                                 openDetail(StatisticsDetail.ARTISTS)
                                             }, onItemMenu, onArtistVisible)
+                                        }
+                                        state.listeningStreak?.let { streak ->
+                                            item {
+                                                StatisticsCard("Listening streak") {
+                                                    Row(
+                                                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                                    ) {
+                                                        Column(Modifier.weight(1f)) {
+                                                            Text("🔥 ${streak.currentDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                                                            Text(if (streak.listenedToday) "Streak active today" else "Play a song to continue", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                        }
+                                                        Column(Modifier.weight(1f)) {
+                                                            Text("${streak.longestDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                                                            Text("Longest streak", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                         item { StatisticsCard(stringResource(Res.string.statistics_overview)) { SummaryGrid(state) } }
                                         item {
