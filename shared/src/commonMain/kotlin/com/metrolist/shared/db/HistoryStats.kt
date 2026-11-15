@@ -423,14 +423,14 @@ internal fun calculateListeningStreak(
     return ListeningStreakStats(current, longest, today in playedDates)
 }
 
-private fun completedStreakDates(): MutableSet<LocalDate> =
+fun completedListeningStreakDates(): Set<LocalDate> =
     Settings.shared.listeningStreakCompletedDates
         .split(',')
         .mapNotNull { value -> value.takeIf(String::isNotBlank)?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
         .toMutableSet()
 
 fun recordCompletedListeningStreakDay(date: LocalDate) {
-    val dates = completedStreakDates()
+    val dates = completedListeningStreakDates().toMutableSet()
     dates += date
     Settings.shared.listeningStreakCompletedDates = dates.sorted().joinToString(",")
 }
@@ -447,7 +447,7 @@ private fun recoveryUsage(today: LocalDate): Int {
 }
 
 fun listeningStreakRecoveryStatus(today: LocalDate): ListeningStreakRecoveryStatus {
-    val dates = completedStreakDates()
+    val dates = completedListeningStreakDates()
     val lastDate = dates.filter { it <= today }.maxOrNull()
     val broken = lastDate != null && lastDate < today.minus(1, DateTimeUnit.DAY)
     val used = recoveryUsage(today)
@@ -455,7 +455,7 @@ fun listeningStreakRecoveryStatus(today: LocalDate): ListeningStreakRecoveryStat
 }
 
 fun recoverListeningStreak(today: LocalDate): Boolean {
-    val dates = completedStreakDates()
+    val dates = completedListeningStreakDates().toMutableSet()
     val lastDate = dates.filter { it <= today }.maxOrNull() ?: return false
     if (lastDate >= today.minus(1, DateTimeUnit.DAY)) return false
     val used = recoveryUsage(today)
@@ -475,7 +475,7 @@ suspend fun MusicDatabase.listeningStreakStats(
     clock: kotlin.time.Clock = kotlin.time.Clock.System,
 ): ListeningStreakStats {
     val today = clock.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-    val base = calculateListeningStreak(completedStreakDates(), today)
+    val base = calculateListeningStreak(completedListeningStreakDates(), today)
     val recovery = listeningStreakRecoveryStatus(today)
     return base.copy(recoveriesUsed = recovery.usedThisMonth, canRecover = recovery.canRecover)
 }
