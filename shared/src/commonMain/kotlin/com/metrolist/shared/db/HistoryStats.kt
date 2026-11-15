@@ -19,6 +19,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -384,6 +390,50 @@ private suspend fun MusicDatabase.timeBuckets(
             ),
         )
     }
+}
+
+
+data class ListeningStreakStats(
+    val currentDays: Int,
+    val longestDays: Int,
+    val listenedToday: Boolean,
+)
+
+internal fun calculateListeningStreak(
+    playedDates: Set<LocalDate>,
+    today: LocalDate,
+): ListeningStreakStats {
+    var longest = 0
+    var run = 0
+    var previous: LocalDate? = null
+    playedDates.sorted().forEach { date ->
+        run = if (previous?.plus(1, DateTimeUnit.DAY) == date) run + 1 else 1
+        longest = maxOf(longest, run)
+        previous = date
+    }
+
+    var cursor = if (today in playedDates) today else today.minus(1, DateTimeUnit.DAY)
+    var current = 0
+    while (cursor in playedDates) {
+        current++
+        cursor = cursor.minus(1, DateTimeUnit.DAY)
+    }
+
+    return ListeningStreakStats(
+        currentDays = current,
+        longestDays = longest,
+        listenedToday = today in playedDates,
+    )
+}
+
+suspend fun MusicDatabase.listeningStreakStats(
+    clock: kotlin.time.Clock = kotlin.time.Clock.System,
+): ListeningStreakStats {
+    val now = clock.now()
+    val today = now.toLocalDateTime(TimeZone.currentSystemDefault()).date
+    val buckets = historyTimeBuckets(Long.MIN_VALUE, now.toEpochMilliseconds(), hourly = false, localTime = true, catalogArtistIds = true)
+    val dates = buckets.mapNotNull { bucket -> runCatching { LocalDate.parse(bucket.bucket) }.getOrNull() }.toSet()
+    return calculateListeningStreak(dates, today)
 }
 
 data class HistoryStatisticsSnapshot(
