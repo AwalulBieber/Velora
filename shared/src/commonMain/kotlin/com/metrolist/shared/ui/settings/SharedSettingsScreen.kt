@@ -1095,7 +1095,7 @@ private fun SettingsItemRow(
                 Modifier
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .fillMaxWidth()
-                    .heightIn(min = 72.dp)
+                    .heightIn(min = 64.dp)
                     .clip(shape)
                     .background(background)
                     .focusOutline(shape)
@@ -1126,7 +1126,7 @@ private fun SettingsItemRow(
                                     },
                             )
                         },
-                    ).padding(horizontal = 16.dp, vertical = 16.dp),
+                    ).padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
