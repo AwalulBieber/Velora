@@ -945,13 +945,13 @@ internal fun SettingsNavigationRow(
         modifier =
             modifier
                 .fillMaxWidth()
-                .heightIn(min = 72.dp)
+                .heightIn(min = 64.dp)
                 .then(focusModifier(shape))
                 .clip(shape)
                 .background(containerColor)
                 .focusOutline(shape)
                 .clickable(interactionSource = interactionSource, indication = ripple(), onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val resolvedIconTint = iconTint ?: MaterialTheme.colorScheme.onSurfaceVariant
@@ -1009,13 +1009,6 @@ internal fun SettingsItemGroup(
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.semantics { heading() },
                 )
-                group.description?.let {
-                    Text(
-                        it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
             }
         }
         Column(
@@ -1102,7 +1095,7 @@ private fun SettingsItemRow(
                 Modifier
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .fillMaxWidth()
-                    .heightIn(min = 72.dp)
+                    .heightIn(min = 64.dp)
                     .clip(shape)
                     .background(background)
                     .focusOutline(shape)
@@ -1133,10 +1126,10 @@ private fun SettingsItemRow(
                                     },
                             )
                         },
-                    ).padding(horizontal = 16.dp, vertical = 16.dp),
+                    ).padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         item.title,
