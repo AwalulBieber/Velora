@@ -409,33 +409,21 @@ fun StatisticsScreen(
                                                 StatisticsCard("Listening streak") {
                                                     Column(
                                                         modifier = Modifier.fillMaxWidth().combinedClickable(onClick = { onOpenListeningStreak?.invoke() }).padding(vertical = 8.dp),
-                                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                                        verticalArrangement = Arrangement.spacedBy(10.dp),
                                                     ) {
-                                                        Column(Modifier.weight(1f)) {
-                                                            Text(
-                                                                "🔥 ${streak.currentDays} days",
-                                                                style = MaterialTheme.typography.headlineSmall,
-                                                                fontWeight = FontWeight.Bold,
-                                                                color = streakColor,
-                                                            )
-                                                            Text(if (streak.listenedToday) "Streak active today" else "Play a song to continue", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                                                            Column(Modifier.weight(1f)) {
+                                                                Text("🔥 ${streak.currentDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = streakColor)
+                                                                Text(if (streak.listenedToday) "Streak active today" else "Play a song to continue", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                            }
+                                                            Column(Modifier.weight(1f)) {
+                                                                Text("${streak.longestDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = streakColor)
+                                                                Text("Longest streak", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                                            }
                                                         }
-                                                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                                        Column(Modifier.weight(1f)) {
-                                                            Text(
-                                                                "${streak.longestDays} days",
-                                                                style = MaterialTheme.typography.headlineSmall,
-                                                                fontWeight = FontWeight.Bold,
-                                                                color = streakColor,
-                                                            )
-                                                            Text("Longest streak", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                                        }
-                                                        }
-                                                        Text("View streak calendar  →", style = MaterialTheme.typography.labelLarge, color = streakColor, modifier = Modifier.padding(top = 10.dp))
+                                                        Text("View streak calendar  →", style = MaterialTheme.typography.labelLarge, color = streakColor)
                                                     }
-                                                }
-                                            }
-                                        }
+
                                         item { StatisticsCard(stringResource(Res.string.statistics_overview)) { SummaryGrid(state) } }
                                         item {
                                             StatisticsCard(stringResource(Res.string.statistics_activity)) {
