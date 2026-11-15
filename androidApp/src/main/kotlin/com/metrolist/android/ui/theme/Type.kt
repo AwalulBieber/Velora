@@ -35,21 +35,81 @@ fun getAppTypography(): Typography {
 
     return Typography(
         fontFamily = font,
-        displayLarge = typography.displayLarge.copy(fontFamily = font, fontWeight = typography.displayLarge.fontWeight.adjusted(weightAdjustment)),
-        displayMedium = typography.displayMedium.copy(fontFamily = font, fontWeight = typography.displayMedium.fontWeight.adjusted(weightAdjustment)),
-        displaySmall = typography.displaySmall.copy(fontFamily = font, fontWeight = typography.displaySmall.fontWeight.adjusted(weightAdjustment)),
-        headlineLarge = typography.headlineLarge.copy(fontFamily = font, fontWeight = typography.headlineLarge.fontWeight.adjusted(weightAdjustment)),
-        headlineMedium = typography.headlineMedium.copy(fontFamily = font, fontWeight = typography.headlineMedium.fontWeight.adjusted(weightAdjustment)),
-        headlineSmall = typography.headlineSmall.copy(fontFamily = font, fontWeight = typography.headlineSmall.fontWeight.adjusted(weightAdjustment)),
-        titleLarge = typography.titleLarge.copy(fontFamily = font, fontWeight = typography.titleLarge.fontWeight.adjusted(weightAdjustment)),
-        titleMedium = typography.titleMedium.copy(fontFamily = font, fontWeight = typography.titleMedium.fontWeight.adjusted(weightAdjustment)),
-        titleSmall = typography.titleSmall.copy(fontFamily = font, fontWeight = typography.titleSmall.fontWeight.adjusted(weightAdjustment)),
-        bodyLarge = typography.bodyLarge.copy(fontFamily = font, fontWeight = typography.bodyLarge.fontWeight.adjusted(weightAdjustment)),
-        bodyMedium = typography.bodyMedium.copy(fontFamily = font, fontWeight = typography.bodyMedium.fontWeight.adjusted(weightAdjustment)),
-        bodySmall = typography.bodySmall.copy(fontFamily = font, fontWeight = typography.bodySmall.fontWeight.adjusted(weightAdjustment)),
-        labelLarge = typography.labelLarge.copy(fontFamily = font, fontWeight = typography.labelLarge.fontWeight.adjusted(weightAdjustment)),
-        labelMedium = typography.labelMedium.copy(fontFamily = font, fontWeight = typography.labelMedium.fontWeight.adjusted(weightAdjustment)),
-        labelSmall = typography.labelSmall.copy(fontFamily = font, fontWeight = typography.labelSmall.fontWeight.adjusted(weightAdjustment)),
+        displayLarge =
+            typography.displayLarge.copy(
+                fontFamily = font,
+                fontWeight = typography.displayLarge.fontWeight.adjusted(weightAdjustment),
+            ),
+        displayMedium =
+            typography.displayMedium.copy(
+                fontFamily = font,
+                fontWeight = typography.displayMedium.fontWeight.adjusted(weightAdjustment),
+            ),
+        displaySmall =
+            typography.displaySmall.copy(
+                fontFamily = font,
+                fontWeight = typography.displaySmall.fontWeight.adjusted(weightAdjustment),
+            ),
+        headlineLarge =
+            typography.headlineLarge.copy(
+                fontFamily = font,
+                fontWeight = typography.headlineLarge.fontWeight.adjusted(weightAdjustment),
+            ),
+        headlineMedium =
+            typography.headlineMedium.copy(
+                fontFamily = font,
+                fontWeight = typography.headlineMedium.fontWeight.adjusted(weightAdjustment),
+            ),
+        headlineSmall =
+            typography.headlineSmall.copy(
+                fontFamily = font,
+                fontWeight = typography.headlineSmall.fontWeight.adjusted(weightAdjustment),
+            ),
+        titleLarge =
+            typography.titleLarge.copy(
+                fontFamily = font,
+                fontWeight = typography.titleLarge.fontWeight.adjusted(weightAdjustment),
+            ),
+        titleMedium =
+            typography.titleMedium.copy(
+                fontFamily = font,
+                fontWeight = typography.titleMedium.fontWeight.adjusted(weightAdjustment),
+            ),
+        titleSmall =
+            typography.titleSmall.copy(
+                fontFamily = font,
+                fontWeight = typography.titleSmall.fontWeight.adjusted(weightAdjustment),
+            ),
+        bodyLarge =
+            typography.bodyLarge.copy(
+                fontFamily = font,
+                fontWeight = typography.bodyLarge.fontWeight.adjusted(weightAdjustment),
+            ),
+        bodyMedium =
+            typography.bodyMedium.copy(
+                fontFamily = font,
+                fontWeight = typography.bodyMedium.fontWeight.adjusted(weightAdjustment),
+            ),
+        bodySmall =
+            typography.bodySmall.copy(
+                fontFamily = font,
+                fontWeight = typography.bodySmall.fontWeight.adjusted(weightAdjustment),
+            ),
+        labelLarge =
+            typography.labelLarge.copy(
+                fontFamily = font,
+                fontWeight = typography.labelLarge.fontWeight.adjusted(weightAdjustment),
+            ),
+        labelMedium =
+            typography.labelMedium.copy(
+                fontFamily = font,
+                fontWeight = typography.labelMedium.fontWeight.adjusted(weightAdjustment),
+            ),
+        labelSmall =
+            typography.labelSmall.copy(
+                fontFamily = font,
+                fontWeight = typography.labelSmall.fontWeight.adjusted(weightAdjustment),
+            ),
     )
 }
 
