@@ -17,6 +17,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -36,13 +38,16 @@ import androidx.compose.ui.unit.dp
 import com.metrolist.shared.db.ListeningStreakStats
 import com.metrolist.shared.db.MusicDatabase
 import com.metrolist.shared.db.historyChanges
-import com.metrolist.shared.db.historyTimeBuckets
+import com.metrolist.shared.db.completedListeningStreakDates
 import com.metrolist.shared.db.listeningStreakStats
+import com.metrolist.shared.db.listeningStreakRecoveryStatus
+import com.metrolist.shared.db.recoverListeningStreak
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
@@ -59,6 +64,10 @@ internal fun MobileListeningStreakScreen(
     var activity by remember(database) { mutableStateOf<Map<String, Int>>(emptyMap()) }
     var loading by remember(database) { mutableStateOf(true) }
     var failed by remember(database) { mutableStateOf(false) }
+    var recoveryDialog by remember { mutableStateOf(false) }
+    var recoveryUsed by remember { mutableStateOf(0) }
+    var recoveryRemaining by remember { mutableStateOf(5) }
+    var canRecover by remember { mutableStateOf(false) }
 
     LaunchedEffect(database) {
         database.historyChanges().collectLatest {
@@ -66,15 +75,14 @@ internal fun MobileListeningStreakScreen(
             failed = false
             try {
                 val now = Clock.System.now()
-                val buckets = database.historyTimeBuckets(
-                    sinceMs = now.toEpochMilliseconds() - 371L * 24L * 60L * 60L * 1000L,
-                    untilMs = now.toEpochMilliseconds(),
-                    hourly = false,
-                    localTime = true,
-                    catalogArtistIds = true,
-                )
-                activity = buckets.associate { it.bucket to it.playCount }
+                val today = now.toLocalDateTime(TimeZone.currentSystemDefault()).date
+                activity = completedListeningStreakDates().associate { it.toString() to 1 }
                 stats = database.listeningStreakStats()
+                listeningStreakRecoveryStatus(today).also {
+                    recoveryUsed = it.usedThisMonth
+                    recoveryRemaining = it.remainingThisMonth
+                    canRecover = it.canRecover
+                }
             } catch (error: CancellationException) {
                 throw error
             } catch (_: Exception) {
@@ -203,6 +211,48 @@ internal fun MobileListeningStreakScreen(
                     }
                 }
             }
+        }
+
+        if (canRecover || recoveryUsed > 0) {
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(22.dp),
+                color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.68f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.32f)),
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("Streak recovery", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Text("$recoveryRemaining of 5 recoveries remaining this month", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (canRecover) {
+                        TextButton(onClick = { recoveryDialog = true }) { Text("Pulihkan Streak") }
+                    } else if (recoveryRemaining == 0) {
+                        Text("Monthly recovery limit reached", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+        }
+
+        if (recoveryDialog) {
+            AlertDialog(
+                onDismissRequest = { recoveryDialog = false },
+                title = { Text("Pulihkan streak?") },
+                text = { Text("Sekali pemulihan akan menyambungkan kembali streak yang terputus dan menggunakan 1 dari 5 jatah bulan ini.") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+                        if (recoverListeningStreak(today)) {
+                            recoveryUsed = listeningStreakRecoveryStatus(today).usedThisMonth
+                            recoveryRemaining = 5 - recoveryUsed
+                            canRecover = false
+                            kotlinx.coroutines.MainScope().launch {
+                                stats = database.listeningStreakStats()
+                            }
+                        }
+                        recoveryDialog = false
+                    }) { Text("Pulihkan") }
+                },
+                dismissButton = { TextButton(onClick = { recoveryDialog = false }) { Text("Batal") } },
+            )
         }
 
         if (loading) Text("Updating listening activity…", modifier = Modifier.padding(horizontal = 20.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
