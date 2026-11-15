@@ -145,7 +145,7 @@ internal fun MobileListeningStreakScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StreakMetricCard("Personal best", "$longest days", longestColor, Modifier.weight(1f))
-            StreakMetricCard("Active days · 12 mo", "${activity.size} days", currentColor, Modifier.weight(1f))
+            StreakMetricCard("Active days · 12 mo", "${activity.keys.count { it >= firstDay.toString() && it <= today.toString() }} days", currentColor, Modifier.weight(1f))
         }
 
         Column(
