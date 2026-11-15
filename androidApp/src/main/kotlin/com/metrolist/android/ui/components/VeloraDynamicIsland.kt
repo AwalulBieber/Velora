@@ -3,6 +3,7 @@ package com.metrolist.android.ui.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,9 +64,7 @@ fun VeloraDynamicIsland(
                 )
             } else {
                 Box(
-                    modifier = Modifier.size(10.dp).clip(CircleShape).then(
-                        Modifier
-                    ),
+                    modifier = Modifier.size(10.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.82f)),
                 )
             }
             Column(
