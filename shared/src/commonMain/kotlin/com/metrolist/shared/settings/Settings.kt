@@ -872,6 +872,9 @@ class Settings(
     var savedWidth by preference(1080)
     var savedHeight by preference(720)
 
+    var listeningStreakCompletedDates by blobPreference("veloraListeningStreakCompletedDates")
+    var listeningStreakRecoveryState by blobPreference("veloraListeningStreakRecoveryState")
+
     // Read these non-reactive payloads on demand to avoid retaining a second copy in Compose state.
     private fun blobPreference(key: String): ReadWriteProperty<Settings, String> {
         settingTypes[key] = SettingType.STRING
