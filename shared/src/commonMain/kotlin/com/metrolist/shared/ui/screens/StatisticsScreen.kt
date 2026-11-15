@@ -226,6 +226,7 @@ fun StatisticsScreen(
     onItemMenu: ((StatisticsItem) -> Unit)? = null,
     onOpenDetail: ((StatisticsDetail) -> Unit)? = null,
     onNavigateBack: (() -> Unit)? = null,
+    onOpenListeningStreak: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     bottomContentPadding: Dp = 0.dp,
     onArtistVisible: (suspend (StatisticsItem) -> Unit)? = null,
@@ -406,8 +407,8 @@ fun StatisticsScreen(
                                             item {
                                                 val streakColor = listeningStreakMilestoneColor(maxOf(streak.currentDays, streak.longestDays))
                                                 StatisticsCard("Listening streak") {
-                                                    Row(
-                                                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                                                    Column(
+                                                        modifier = Modifier.fillMaxWidth().combinedClickable(onClick = { onOpenListeningStreak?.invoke() }).padding(vertical = 8.dp),
                                                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                                                     ) {
                                                         Column(Modifier.weight(1f)) {
@@ -419,6 +420,7 @@ fun StatisticsScreen(
                                                             )
                                                             Text(if (streak.listenedToday) "Streak active today" else "Play a song to continue", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         }
+                                                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                                         Column(Modifier.weight(1f)) {
                                                             Text(
                                                                 "${streak.longestDays} days",
@@ -428,6 +430,8 @@ fun StatisticsScreen(
                                                             )
                                                             Text("Longest streak", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                         }
+                                                        }
+                                                        Text("View streak calendar  →", style = MaterialTheme.typography.labelLarge, color = streakColor, modifier = Modifier.padding(top = 10.dp))
                                                     }
                                                 }
                                             }
