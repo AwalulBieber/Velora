@@ -3,10 +3,6 @@ package com.metrolist.android.playback
 import android.os.SystemClock
 import androidx.compose.runtime.snapshotFlow
 import com.metrolist.shared.model.SongItem
-import com.metrolist.shared.db.recordCompletedListeningStreakDay
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
 import com.metrolist.shared.playback.ListeningHistoryClock
 import com.metrolist.shared.settings.Settings
 import com.metrolist.shared.utils.Logger
@@ -61,16 +57,6 @@ internal class AndroidListeningHistory(
     }
 
     fun start() {
-        scope.launch {
-            player.onEOFPlaybackInstance.collect {
-                val song = player.currentSong.value
-                if (song != null && !song.isLive) {
-                    recordCompletedListeningStreakDay(
-                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
-                    )
-                }
-            }
-        }
         scope.launch {
             snapshotFlow { Settings.shared.pauseListenHistory }.collect(::onHistoryPausedChanged)
         }
