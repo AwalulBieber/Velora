@@ -614,6 +614,7 @@ internal fun TabletPlayerContent(
                         onShowPlayerMenu = onShowPlayerMenu,
                         isLyricsVisible = uiState.isLyricsVisible,
                         onIsLyricsVisibleChange = onIsLyricsVisibleChange,
+                        isPlaying = isPlaying,
                         isVideoAvailable = uiState.isVideoAvailable,
                         modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth(),
                         isListenTogetherGuest = isListenTogetherGuest,
