@@ -1343,8 +1343,7 @@ fun MetrolistApp(
                                 modifier =
                                     Modifier
                                         .align(Alignment.TopCenter)
-                                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
-                                        .padding(top = 8.dp)
+                                                                                .padding(top = 8.dp)
                                         .zIndex(10f),
                             )
                         }
