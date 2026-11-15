@@ -405,7 +405,8 @@ fun StatisticsScreen(
                                         }
                                         state.listeningStreak?.let { streak ->
                                             item {
-                                                val streakColor = listeningStreakMilestoneColor(maxOf(streak.currentDays, streak.longestDays))
+                                                val currentStreakColor = listeningStreakMilestoneColor(streak.currentDays)
+                                                val longestStreakColor = listeningStreakMilestoneColor(streak.longestDays)
                                                 StatisticsCard("Listening streak") {
                                                     Column(
                                                         modifier = Modifier.fillMaxWidth().combinedClickable(onClick = { onOpenListeningStreak?.invoke() }).padding(vertical = 8.dp),
@@ -413,15 +414,15 @@ fun StatisticsScreen(
                                                     ) {
                                                         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                                                             Column(Modifier.weight(1f)) {
-                                                                Text("🔥 ${streak.currentDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = streakColor)
+                                                                Text("🔥 ${streak.currentDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = currentStreakColor)
                                                                 Text(if (streak.listenedToday) "Streak active today" else "Play a song to continue", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                             }
                                                             Column(Modifier.weight(1f)) {
-                                                                Text("${streak.longestDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = streakColor)
+                                                                Text("${streak.longestDays} days", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = longestStreakColor)
                                                                 Text("Longest streak", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                                             }
                                                         }
-                                                        Text("View streak calendar  →", style = MaterialTheme.typography.labelLarge, color = streakColor)
+                                                        Text("View streak calendar  →", style = MaterialTheme.typography.labelLarge, color = currentStreakColor)
                                                     }
                                                 }
                                             }
