@@ -3,6 +3,8 @@
 package com.metrolist.shared.ui.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
@@ -54,6 +56,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.metrolist.shared.ui.components.focusOutline
+import com.metrolist.shared.settings.Settings
 import kotlin.math.abs
 
 val LocalFloatingNavBar = compositionLocalOf { false }
@@ -75,19 +78,28 @@ internal fun <T> FloatingNavigation(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
+    val iosAnimationsEnabled = Settings.shared.veloraIosStyleAnimations
     AnimatedVisibility(
         visible = navigationVisible,
         modifier = modifier,
         enter =
-            expandVertically(
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 700f),
-                expandFrom = Alignment.Bottom,
-            ),
+            if (iosAnimationsEnabled) {
+                expandVertically(
+                    animationSpec = spring(dampingRatio = 0.9f, stiffness = 700f),
+                    expandFrom = Alignment.Bottom,
+                )
+            } else {
+                EnterTransition.None
+            },
         exit =
-            shrinkVertically(
-                animationSpec = spring(dampingRatio = 0.9f, stiffness = 700f),
-                shrinkTowards = Alignment.Bottom,
-            ),
+            if (iosAnimationsEnabled) {
+                shrinkVertically(
+                    animationSpec = spring(dampingRatio = 0.9f, stiffness = 700f),
+                    shrinkTowards = Alignment.Bottom,
+                )
+            } else {
+                ExitTransition.None
+            },
     ) {
         FloatingNavigationBar(
             items = items,
@@ -112,6 +124,7 @@ private fun <T> FloatingNavigationBar(
     itemModifier: @Composable (T) -> Modifier,
     modifier: Modifier = Modifier,
 ) {
+    val iosAnimationsEnabled = Settings.shared.veloraIosStyleAnimations
     val pillItems = items.filter { it.key != separateKey }
     val separateItem = items.firstOrNull { it.key == separateKey }
     var dragDistance by remember { mutableFloatStateOf(0f) }
@@ -170,14 +183,14 @@ private fun <T> FloatingNavigationBar(
 
         if (separateItem != null) {
             val selected = separateItem.key == selectedKey
-            val container by animateColorAsState(
-                if (selected) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.88f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.78f),
-                label = "floatingSearchContainer",
-            )
-            val content by animateColorAsState(
-                if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface,
-                label = "floatingSearchContent",
-            )
+            val targetContainer =
+                if (selected) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.88f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.78f)
+            val animatedContainer by animateColorAsState(targetContainer, label = "floatingSearchContainer")
+            val container = if (iosAnimationsEnabled) animatedContainer else targetContainer
+            val targetContent =
+                if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface
+            val animatedContent by animateColorAsState(targetContent, label = "floatingSearchContent")
+            val content = if (iosAnimationsEnabled) animatedContent else targetContent
             Surface(
                 onClick = { onSelect(separateItem.key) },
                 modifier = Modifier.size(FloatingBarHeight).then(itemModifier(separateItem.key)),
@@ -205,14 +218,15 @@ private fun <T> FloatingNavigationItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val indicator by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.88f) else MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0f),
-        label = "floatingItemIndicator",
-    )
-    val contentColor by animateColorAsState(
-        if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-        label = "floatingItemContent",
-    )
+    val iosAnimationsEnabled = Settings.shared.veloraIosStyleAnimations
+    val targetIndicator =
+        if (selected) MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.88f) else MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0f)
+    val animatedIndicator by animateColorAsState(targetIndicator, label = "floatingItemIndicator")
+    val indicator = if (iosAnimationsEnabled) animatedIndicator else targetIndicator
+    val targetContentColor =
+        if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+    val animatedContentColor by animateColorAsState(targetContentColor, label = "floatingItemContent")
+    val contentColor = if (iosAnimationsEnabled) animatedContentColor else targetContentColor
     Row(
         modifier =
             modifier
@@ -232,8 +246,8 @@ private fun <T> FloatingNavigationItem(
     ) {
         AnimatedVisibility(
             visible = selected,
-            enter = fadeIn() + expandHorizontally(spring(dampingRatio = 0.9f, stiffness = 700f)),
-            exit = fadeOut() + shrinkHorizontally(spring(dampingRatio = 0.9f, stiffness = 700f)),
+            enter = if (iosAnimationsEnabled) fadeIn() + expandHorizontally(spring(dampingRatio = 0.9f, stiffness = 700f)) else EnterTransition.None,
+            exit = if (iosAnimationsEnabled) fadeOut() + shrinkHorizontally(spring(dampingRatio = 0.9f, stiffness = 700f)) else ExitTransition.None,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(imageVector = item.selectedIcon, contentDescription = null, tint = contentColor)
