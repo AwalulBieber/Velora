@@ -188,6 +188,7 @@ import com.metrolist.android.ui.components.AccountMenu
 import com.metrolist.android.ui.components.DesktopCaptionBar
 import com.metrolist.android.ui.components.DesktopMiniPlayerHeight
 import com.metrolist.android.ui.components.MiniPlayer
+import com.metrolist.android.ui.components.VeloraDynamicIsland
 import com.metrolist.android.ui.components.calculateMiniPlayerInsets
 import com.metrolist.android.ui.components.shouldUseDesktopCaption
 import com.metrolist.android.ui.components.shouldUseDesktopMiniPlayer
@@ -1323,6 +1324,30 @@ fun MetrolistApp(
                     }
 
                     Box(Modifier.fillMaxSize()) {
+                        if (
+                            Settings.shared.veloraDynamicIslandEnabled &&
+                            currentSong != null &&
+                            !isPlayerExpandedOrExpanding &&
+                            !isInPipMode &&
+                            !immersiveContent.value
+                        ) {
+                            VeloraDynamicIsland(
+                                song = currentSong!!,
+                                isPlaying = isPlaying,
+                                expanded = Settings.shared.veloraDynamicIslandStyle == "EXPANDED",
+                                showArtwork = Settings.shared.veloraDynamicIslandShowArtwork,
+                                showControls = Settings.shared.veloraDynamicIslandShowControls,
+                                onExpand = { playerBottomSheetState.expandSoft() },
+                                onTogglePlayback = { playerConnection.togglePlayPause() },
+                                onSkipNext = { playerConnection.skipToNext() },
+                                modifier =
+                                    Modifier
+                                        .align(Alignment.TopCenter)
+                                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
+                                        .padding(top = 8.dp)
+                                        .zIndex(10f),
+                            )
+                        }
                         val playerHandlesBack by remember(playerBottomSheetState) {
                             derivedStateOf { playerBottomSheetState.progress > 0.2f && !playerBottomSheetState.isDismissed }
                         }
