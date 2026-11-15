@@ -47,6 +47,18 @@ class ListeningStreakTest {
     }
 
     @Test
+    fun aFullyMissedDayBreaksTheCurrentStreak() {
+        val result = calculateListeningStreak(
+            playedDates = setOf(LocalDate.parse("2026-11-12"), LocalDate.parse("2026-11-13")),
+            today = LocalDate.parse("2026-11-15"),
+        )
+
+        assertEquals(0, result.currentDays)
+        assertEquals(2, result.longestDays)
+        assertFalse(result.listenedToday)
+    }
+
+    @Test
     fun emptyHistoryHasNoCurrentOrLongestStreak() {
         val result = calculateListeningStreak(
             playedDates = emptySet(),
