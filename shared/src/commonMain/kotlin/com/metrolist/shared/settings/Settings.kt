@@ -301,6 +301,7 @@ class Settings(
     var materialYouEnabled by preference(true)
     var uiEnhancements by preference(true)
     var veloraIosStyleAnimations by preference("veloraIosStyleAnimations", true)
+    var veloraHighRefreshRateEnabled by preference("veloraHighRefreshRateEnabled", false)
     var veloraDynamicIslandEnabled by preference("veloraDynamicIslandEnabled", true)
     var veloraDynamicIslandStyle by preference("veloraDynamicIslandStyle", "COMPACT")
     var veloraDynamicIslandShowArtwork by preference("veloraDynamicIslandShowArtwork", true)
