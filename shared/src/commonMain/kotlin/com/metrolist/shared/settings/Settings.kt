@@ -15,6 +15,7 @@ import com.metrolist.shared.constants.ActiveLyricsTextPositionKey
 import com.metrolist.shared.constants.AiSlopBlocklistCacheKey
 import com.metrolist.shared.constants.AiSlopBlocklistUpdatedAtKey
 import com.metrolist.shared.constants.AndroidActiveFontIdKey
+import com.metrolist.shared.constants.AppFontWeightAdjustmentKey
 import com.metrolist.shared.constants.AndroidAutoPinnedPlaylistPlaybackModeKey
 import com.metrolist.shared.constants.AndroidAutoPinnedPlaylistsJsonKey
 import com.metrolist.shared.constants.AndroidAutoTargetPlaylistKey
@@ -310,6 +311,7 @@ class Settings(
     var androidCustomFontFile by preference(AndroidCustomFontFileKey, "")
     var androidCustomFontName by preference(AndroidCustomFontNameKey, "")
     var androidActiveFontId by preference(AndroidActiveFontIdKey, "")
+    var appFontWeightAdjustment by preference(AppFontWeightAdjustmentKey, 0)
     var iosCustomFontFile by preference(IosCustomFontFileKey, "")
     var iosCustomFontName by preference(IosCustomFontNameKey, "")
     var iosCustomFontRevision by preference(IosCustomFontRevisionKey, 0L)
