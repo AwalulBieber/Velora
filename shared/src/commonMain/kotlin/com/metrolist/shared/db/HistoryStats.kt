@@ -406,7 +406,7 @@ internal fun calculateListeningStreak(
     var longest = 0
     var run = 0
     var previous: LocalDate? = null
-    playedDates.sorted().forEach { date ->
+    playedDates.filter { it <= today }.sorted().forEach { date ->
         run = if (previous?.plus(1, DateTimeUnit.DAY) == date) run + 1 else 1
         longest = maxOf(longest, run)
         previous = date
