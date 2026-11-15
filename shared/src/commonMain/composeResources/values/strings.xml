@@ -5352,6 +5352,10 @@
     <string name="settings_supported_links_overview">Choose which YouTube links open in Metrolist</string>
     <string name="settings_equalizer_overview">Sound presets, frequency bands and profiles</string>
     <string name="settings_fonts_overview">Font selection and font imports</string>
+    <string name="app_font_weight">Font weight</string>
+    <string name="app_font_weight_description">Adjust text thickness across the app while preserving the hierarchy between headings and body text.</string>
+    <string name="app_font_weight_default">Default</string>
+    <string name="app_font_weight_adjustment">%1$+d</string>
     <string name="settings_artwork_overview">Animated covers, artwork sources and video quality</string>
     <string name="settings_mini_player_overview">Layout, artwork and playback buttons</string>
     <string name="settings_lyrics_sources_overview">Enable lyric providers and set their priority</string>
