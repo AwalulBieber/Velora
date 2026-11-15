@@ -87,6 +87,12 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
         subtitle = stringResource(Res.string.settings_appearance_overview),
     ) {
         group("theme", stringResource(Res.string.appearance_theme)) {
+            switch(
+                id = "veloraIosStyleAnimations",
+                title = "iOS-style animations",
+                description = "Use smooth iOS-inspired transitions and motion throughout Velora.",
+                checked = settings.veloraIosStyleAnimations,
+            ) { settings.veloraIosStyleAnimations = it }
             choice(
                 id = "themeMode",
                 title = stringResource(Res.string.theme_mode),
