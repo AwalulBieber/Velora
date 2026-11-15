@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,7 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -68,7 +66,6 @@ internal fun MobileListeningStreakScreen(
             failed = false
             try {
                 val now = Clock.System.now()
-                val today = now.toLocalDateTime(TimeZone.currentSystemDefault()).date
                 val buckets = database.historyTimeBuckets(
                     sinceMs = now.toEpochMilliseconds() - 370L * 24L * 60L * 60L * 1000L,
                     untilMs = now.toEpochMilliseconds(),
@@ -137,7 +134,7 @@ internal fun MobileListeningStreakScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StreakMetricCard("Personal best", "$longest days", color, Modifier.weight(1f))
-            StreakMetricCard("Active days", "${activity.size} days", color, Modifier.weight(1f))
+            StreakMetricCard("Active days · 12 mo", "${activity.size} days", color, Modifier.weight(1f))
         }
 
         Column(
