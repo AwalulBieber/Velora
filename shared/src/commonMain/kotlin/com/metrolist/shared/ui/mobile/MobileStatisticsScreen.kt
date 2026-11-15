@@ -51,6 +51,7 @@ internal fun MobileStatisticsScreen(
     onExport: suspend (ImageBitmap) -> Boolean,
     onItemMenu: (YTItem) -> Unit,
     onError: (String) -> Unit,
+    onOpenListeningStreak: () -> Unit = {},
     onBrowse: (MobileBrowseDestination) -> Unit,
     onAlbumClick: (String, String) -> Unit = { id, title -> onBrowse(MobileBrowseDestination(id, null, title)) },
     onArtistClick: (String, String) -> Unit = { id, name -> onBrowse(MobileBrowseDestination(id, null, name)) },
@@ -259,6 +260,7 @@ internal fun MobileStatisticsScreen(
                 ?.let(playbackController::play)
         },
         onNavigateBack = onBack,
+        onOpenListeningStreak = onOpenListeningStreak,
         bottomContentPadding = bottomContentPadding,
         modifier = modifier,
     )
