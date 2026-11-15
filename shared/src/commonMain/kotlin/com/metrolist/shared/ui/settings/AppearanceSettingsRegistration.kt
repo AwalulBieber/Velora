@@ -168,6 +168,14 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
             }
         }
         if (host.platform == SettingsPlatform.ANDROID) {
+            group("displayPerformance", "Display performance") {
+                switch(
+                    id = "veloraHighRefreshRateEnabled",
+                    title = "Enable high refresh rate",
+                    description = "Request the highest refresh rate supported by your display. Availability depends on your device and system settings; higher rates may use more battery.",
+                    checked = settings.veloraHighRefreshRateEnabled,
+                ) { settings.veloraHighRefreshRateEnabled = it }
+            }
             group("dynamicIsland", "Dynamic Island") {
                 switch(
                     id = "veloraDynamicIslandEnabled",
