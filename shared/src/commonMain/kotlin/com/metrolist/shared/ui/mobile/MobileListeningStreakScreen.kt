@@ -67,7 +67,7 @@ internal fun MobileListeningStreakScreen(
             try {
                 val now = Clock.System.now()
                 val buckets = database.historyTimeBuckets(
-                    sinceMs = now.toEpochMilliseconds() - 370L * 24L * 60L * 60L * 1000L,
+                    sinceMs = now.toEpochMilliseconds() - 371L * 24L * 60L * 60L * 1000L,
                     untilMs = now.toEpochMilliseconds(),
                     hourly = false,
                     localTime = true,
@@ -87,7 +87,8 @@ internal fun MobileListeningStreakScreen(
 
     val current = stats?.currentDays ?: 0
     val longest = stats?.longestDays ?: 0
-    val color = streakMilestoneColor(maxOf(current, longest))
+    val currentColor = streakMilestoneColor(current)
+    val longestColor = streakMilestoneColor(longest)
     val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     val firstDay = today.minus(364 + today.dayOfWeek.ordinal, DateTimeUnit.DAY)
     val calendarDays = (0 until 371).map { firstDay.plus(it, DateTimeUnit.DAY) }
@@ -110,11 +111,11 @@ internal fun MobileListeningStreakScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             shape = RoundedCornerShape(28.dp),
             color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f),
-            border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.42f)),
+            border = androidx.compose.foundation.BorderStroke(1.dp, currentColor.copy(alpha = 0.42f)),
         ) {
             Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("🔥", style = MaterialTheme.typography.displayMedium)
-                Text("$current days", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = color)
+                Text("$current days", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Bold, color = currentColor)
                 Text(
                     if (stats?.listenedToday == true) "You're keeping the streak alive today" else "Play a song today to keep your streak going",
                     style = MaterialTheme.typography.bodyMedium,
@@ -123,7 +124,7 @@ internal fun MobileListeningStreakScreen(
                 Text(
                     "Milestone: ${streakMilestoneLabel(maxOf(current, longest))}",
                     style = MaterialTheme.typography.labelLarge,
-                    color = color,
+                    color = currentColor,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
@@ -133,8 +134,8 @@ internal fun MobileListeningStreakScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            StreakMetricCard("Personal best", "$longest days", color, Modifier.weight(1f))
-            StreakMetricCard("Active days · 12 mo", "${activity.size} days", color, Modifier.weight(1f))
+            StreakMetricCard("Personal best", "$longest days", longestColor, Modifier.weight(1f))
+            StreakMetricCard("Active days · 12 mo", "${activity.size} days", currentColor, Modifier.weight(1f))
         }
 
         Column(
@@ -156,7 +157,7 @@ internal fun MobileListeningStreakScreen(
                                     val count = activity[date.toString()] ?: 0
                                     Box(
                                         Modifier.size(10.dp).clip(RoundedCornerShape(3.dp))
-                                            .background(activityColor(count, color)),
+                                            .background(activityColor(count, currentColor)),
                                     )
                                 }
                             }
@@ -165,7 +166,7 @@ internal fun MobileListeningStreakScreen(
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text("Less", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         listOf(0, 1, 3, 6).forEach { level ->
-                            Box(Modifier.size(10.dp).clip(RoundedCornerShape(3.dp)).background(activityColor(level, color)))
+                            Box(Modifier.size(10.dp).clip(RoundedCornerShape(3.dp)).background(activityColor(level, currentColor)))
                         }
                         Text("More", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
