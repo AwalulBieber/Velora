@@ -1266,6 +1266,7 @@ fun MobileApp(
                             MobileRoute.Statistics -> {
                                 MobileStatisticsScreen(
                                     onError = onSwipeFeedback,
+                                    onOpenListeningStreak = { open(MobileRoute.ListeningStreak) },
                                     bottomContentPadding = playerContentPadding,
                                     onExport = onExportStatistics,
                                     onItemMenu = { menuItem = it to null },
@@ -1275,6 +1276,15 @@ fun MobileApp(
                                     onBrowse = { open(MobileRoute.Browse(it)) },
                                     onAlbumClick = { id, title -> open(MobileRoute.Album(id, title)) },
                                     onArtistClick = { id, name -> open(MobileRoute.Artist(id, name)) },
+                                    modifier = Modifier.fillMaxSize().padding(routePadding),
+                                )
+                            }
+
+                            MobileRoute.ListeningStreak -> {
+                                MobileListeningStreakScreen(
+                                    database = database,
+                                    onBack = ::back,
+                                    bottomContentPadding = playerContentPadding,
                                     modifier = Modifier.fillMaxSize().padding(routePadding),
                                 )
                             }

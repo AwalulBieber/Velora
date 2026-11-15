@@ -30,6 +30,12 @@ sealed class Screen : NavKey {
     data object EasterEgg : Screen()
 
     @Serializable
+    data object You : Screen()
+
+    @Serializable
+    data object Equalizer : Screen()
+
+    @Serializable
     data object Settings : Screen()
 
     @Serializable

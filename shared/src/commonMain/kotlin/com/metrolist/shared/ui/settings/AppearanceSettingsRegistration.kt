@@ -87,6 +87,12 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
         subtitle = stringResource(Res.string.settings_appearance_overview),
     ) {
         group("theme", stringResource(Res.string.appearance_theme)) {
+            switch(
+                id = "veloraIosStyleAnimations",
+                title = "iOS-style animations",
+                description = "Use smooth iOS-inspired transitions and motion throughout Velora.",
+                checked = settings.veloraIosStyleAnimations,
+            ) { settings.veloraIosStyleAnimations = it }
             choice(
                 id = "themeMode",
                 title = stringResource(Res.string.theme_mode),
@@ -159,6 +165,45 @@ internal fun SettingsUiRegistryBuilder.registerAppearanceSettings(host: SharedSe
                     destination = SettingsPageId.FONTS,
                     description = stringResource(Res.string.settings_fonts_overview),
                 )
+            }
+        }
+        if (host.platform == SettingsPlatform.ANDROID) {
+            group("displayPerformance", "Display performance") {
+                switch(
+                    id = "veloraHighRefreshRateEnabled",
+                    title = "Enable high refresh rate",
+                    description = "Request the highest refresh rate supported by your display. Availability depends on your device and system settings; higher rates may use more battery.",
+                    checked = settings.veloraHighRefreshRateEnabled,
+                ) { settings.veloraHighRefreshRateEnabled = it }
+            }
+            group("dynamicIsland", "Dynamic Island") {
+                switch(
+                    id = "veloraDynamicIslandEnabled",
+                    title = "Enable Dynamic Island",
+                    description = "Show a floating now-playing pill at the top of Velora.",
+                    checked = settings.veloraDynamicIslandEnabled,
+                ) { settings.veloraDynamicIslandEnabled = it }
+                choice(
+                    id = "veloraDynamicIslandStyle",
+                    title = "Island size",
+                    valueLabel = if (settings.veloraDynamicIslandStyle == "EXPANDED") "Expanded" else "Compact",
+                    choices = listOf(
+                        SettingsChoice("COMPACT", "Compact"),
+                        SettingsChoice("EXPANDED", "Expanded"),
+                    ),
+                    selectedChoiceId = settings.veloraDynamicIslandStyle,
+                    description = "Choose how much song information the island displays.",
+                ) { settings.veloraDynamicIslandStyle = it }
+                switch(
+                    id = "veloraDynamicIslandShowArtwork",
+                    title = "Show album artwork",
+                    checked = settings.veloraDynamicIslandShowArtwork,
+                ) { settings.veloraDynamicIslandShowArtwork = it }
+                switch(
+                    id = "veloraDynamicIslandShowControls",
+                    title = "Show playback controls",
+                    checked = settings.veloraDynamicIslandShowControls,
+                ) { settings.veloraDynamicIslandShowControls = it }
             }
         }
         if (host.platform == SettingsPlatform.DESKTOP) {

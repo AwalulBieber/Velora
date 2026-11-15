@@ -31,6 +31,8 @@ internal sealed interface MobileRoute {
 
     data object Statistics : MobileRoute
 
+    data object ListeningStreak : MobileRoute
+
     data object Integrations : MobileRoute
 
     data class ListenTogether(
@@ -337,6 +339,7 @@ internal val MobileRoute.motionScreen: Screen
             is MobileRoute.Settings -> Screen.Settings
             MobileRoute.History -> Screen.History
             MobileRoute.Statistics -> Screen.Statistics
+            MobileRoute.ListeningStreak -> Screen.Statistics
             MobileRoute.Integrations -> Screen.Integrations
             is MobileRoute.ListenTogether -> Screen.ListenTogether
             is MobileRoute.Login -> if (isSwitchingChannel) Screen.SwitchChannel else Screen.Login

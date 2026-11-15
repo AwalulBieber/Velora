@@ -300,6 +300,12 @@ class Settings(
 
     var materialYouEnabled by preference(true)
     var uiEnhancements by preference(true)
+    var veloraIosStyleAnimations by preference("veloraIosStyleAnimations", true)
+    var veloraHighRefreshRateEnabled by preference("veloraHighRefreshRateEnabled", false)
+    var veloraDynamicIslandEnabled by preference("veloraDynamicIslandEnabled", true)
+    var veloraDynamicIslandStyle by preference("veloraDynamicIslandStyle", "COMPACT")
+    var veloraDynamicIslandShowArtwork by preference("veloraDynamicIslandShowArtwork", true)
+    var veloraDynamicIslandShowControls by preference("veloraDynamicIslandShowControls", true)
     var dynamicTheme by preference(true)
     var themeMode by preference(ThemeMode.AUTO)
     var autoPureBlack by preference(AutoPureBlackKey, false)
@@ -871,6 +877,9 @@ class Settings(
     var desktopWindowPlacement by preference(DesktopWindowPlacementKey, "")
     var savedWidth by preference(1080)
     var savedHeight by preference(720)
+
+    var listeningStreakCompletedDates by blobPreference("veloraListeningStreakCompletedDates")
+    var listeningStreakRecoveryState by blobPreference("veloraListeningStreakRecoveryState")
 
     // Read these non-reactive payloads on demand to avoid retaining a second copy in Compose state.
     private fun blobPreference(key: String): ReadWriteProperty<Settings, String> {

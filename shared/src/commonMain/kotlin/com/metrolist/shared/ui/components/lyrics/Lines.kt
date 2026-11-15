@@ -415,7 +415,7 @@ fun ActiveLyricsLineContent(
                 .widthIn(max = 800.dp)
                 .then(if (fillWidth) Modifier.fillMaxWidth() else Modifier.width(contentWidth.coerceAtMost(800.dp)))
                 .heightIn(min = reservedHeight),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = if (alignment == TextAlign.Start || alignment == TextAlign.Left) Alignment.Start else Alignment.CenterHorizontally,
     ) {
         if (!singleLine && isWordAnimationEnabled && mainWords != null) {
             WordLevelLyrics(

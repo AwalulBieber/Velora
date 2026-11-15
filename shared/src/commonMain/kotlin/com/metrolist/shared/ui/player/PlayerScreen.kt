@@ -2289,6 +2289,7 @@ fun PlayerScreen(
                                             onShowPlayerMenu = { showPlayerMenu = true },
                                             isLyricsVisible = uiState.isLyricsVisible,
                                             onIsLyricsVisibleChange = { visible -> viewModel.setLyricsVisible(visible) },
+                                            isPlaying = isPlaying,
                                             isVideoAvailable = uiState.isVideoAvailable,
                                             isListenTogetherGuest = isListenTogetherGuest,
                                         )

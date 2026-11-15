@@ -70,6 +70,7 @@ import com.metrolist.shared.model.isVideoType
 import com.metrolist.shared.playback.LocalPlayerSession
 import com.metrolist.shared.playback.SleepTimerState
 import com.metrolist.shared.ui.LocalIsTv
+import com.metrolist.shared.ui.components.VeloraAudioVisualizer
 import com.metrolist.shared.ui.components.PlayerConnectedButtonGroup
 import com.metrolist.shared.ui.components.focusOutline
 import com.metrolist.shared.ui.components.formatSleepTimerRemaining
@@ -106,6 +107,7 @@ internal fun PlayerBottomControls(
     onShowPlayerMenu: () -> Unit,
     isLyricsVisible: Boolean,
     onIsLyricsVisibleChange: (Boolean) -> Unit,
+    isPlaying: Boolean = false,
     isVideoAvailable: Boolean = false,
     onFullscreenClick: (() -> Unit)? = null,
     isFullscreen: Boolean = false,
@@ -142,6 +144,12 @@ internal fun PlayerBottomControls(
                 ).padding(bottom = navigationBarBottomPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        VeloraAudioVisualizer(
+            isPlaying = isPlaying,
+            barColor = MaterialTheme.colorScheme.primary,
+            glowColor = MaterialTheme.colorScheme.tertiary,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 4.dp),
+        )
         if (showQueueHandle) {
             Spacer(modifier = Modifier.height(8.dp))
             if (LocalIsTv.current) {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -98,7 +99,7 @@ import org.jetbrains.compose.resources.stringResource
 fun AboutScreen(
     logo: Painter,
     modifier: Modifier = Modifier,
-    appName: String = "",
+    appName: String = "Velora",
     version: String = BuildConfig.APP_VERSION,
     architecture: String = remember { getAppArchitecture().uppercase() },
     isDebug: Boolean = BuildConfig.DEBUG,
@@ -115,30 +116,9 @@ fun AboutScreen(
     var devtoolsUnlocked by remember { mutableStateOf(Settings.shared.devtoolsUnlocked) }
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    val text = rememberAboutScreenText()
     val devtoolsEnabledMessage = stringResource(Res.string.devtools_enabled)
     val devmodeAlreadyActiveMessage = stringResource(Res.string.devmode_already_active)
-    val playFavoriteMessage = stringResource(Res.string.about_play_favorite_song)
-    val playLabel = stringResource(Res.string.play)
     val uriHandler = LocalUriHandler.current
-    var selectedContributor by remember { mutableStateOf<AboutContributor?>(null) }
-    val openCommunityLink =
-        onOpenCommunityLink ?: { link: AboutCommunityLink ->
-            runCatching { uriHandler.openUri(link.url) }
-            Unit
-        }
-
-    val onContributorLongClick: ((AboutContributor) -> Unit)? =
-        onPlayFavoriteSong?.let { play ->
-            { contributor ->
-                contributor.favoriteSongVideoId?.let { videoId ->
-                    coroutineScope.launch {
-                        snackbarHostState.currentSnackbarData?.dismiss()
-                        if (snackbarHostState.showSnackbar(playFavoriteMessage, playLabel) == SnackbarResult.ActionPerformed) play(videoId)
-                    }
-                }
-            }
-        }
 
     fun handleLogoClick() {
         if (devtoolsUnlocked) {
@@ -153,126 +133,142 @@ fun AboutScreen(
     }
 
     Scaffold(
-        modifier =
-            if (onNavigateBack != null) {
-                modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-            } else {
-                modifier
-            },
+        modifier = if (onNavigateBack != null) modifier.nestedScroll(scrollBehavior.nestedScrollConnection) else modifier,
         containerColor = if (onNavigateBack == null) Color.Transparent else colorScheme.surface,
         contentWindowInsets = WindowInsets(0),
         topBar = {
             if (onNavigateBack != null) {
                 LargeFlexibleTopAppBar(
-                    title = { Text(text.title) },
+                    title = { Text("Tentang Velora") },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack, shapes = IconButtonDefaults.shapes()) {
-                            Icon(
-                                MetrolistIcons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(Res.string.back),
-                            )
+                            Icon(MetrolistIcons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
                         }
                     },
-                    colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            containerColor = colorScheme.surface,
-                            scrolledContainerColor = colorScheme.surfaceContainerHigh,
-                        ),
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = colorScheme.surface,
+                        scrolledContainerColor = colorScheme.surfaceContainerHigh,
+                    ),
                     scrollBehavior = scrollBehavior,
                 )
             }
         },
         snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.padding(bottom = bottomInset),
-            )
+            SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(bottom = bottomInset))
         },
     ) { paddingValues ->
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScrollWithDrag(rememberScrollState())
-                    .padding(contentPadding)
-                    .padding(bottom = bottomInset),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScrollWithDrag(rememberScrollState())
+                .padding(contentPadding)
+                .padding(bottom = bottomInset),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            AppHeaderCard(
-                logo = logo,
-                appName = appName,
-                version = version,
-                architecture = architecture,
-                isDebug = isDebug,
-                colorScheme = colorScheme,
-                onLogoClick = ::handleLogoClick,
-            )
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(28.dp),
+                color = colorScheme.surfaceContainer.copy(alpha = 0.78f),
+                tonalElevation = 2.dp,
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    Image(
+                        painter = logo,
+                        contentDescription = "Logo Velora",
+                        modifier = Modifier.size(88.dp).clip(RoundedCornerShape(24.dp)).clickable { handleLogoClick() },
+                    )
+                    Text("VELORA", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                    Text("Music, in your own flow.", style = MaterialTheme.typography.bodyMedium, color = colorScheme.onSurfaceVariant)
+                    Text(
+                        text = "Versi $version" + if (isDebug) " • Debug" else "",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
 
-            CommunitySection(
-                text = text,
-                onOpenLink = openCommunityLink,
-            )
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                color = colorScheme.surfaceContainerLow.copy(alpha = 0.82f),
+                tonalElevation = 1.dp,
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    Text("DEVELOPER", style = MaterialTheme.typography.labelMedium, color = colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                        Surface(
+                            modifier = Modifier.size(68.dp),
+                            shape = RoundedCornerShape(50),
+                            color = colorScheme.primaryContainer,
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("A", style = MaterialTheme.typography.headlineLarge, color = colorScheme.onPrimaryContainer)
+                            }
+                        }
+                        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text("AwalulBieber", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+                            Text("Developer Velora", style = MaterialTheme.typography.bodyMedium, color = colorScheme.onSurfaceVariant)
+                            Text("Foto profil menyusul", style = MaterialTheme.typography.labelSmall, color = colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+            }
 
-            CollaboratorsList(
-                contributors = listOf(AboutContributors.lead),
-                text = text,
-                title = text.creatorSection,
-                avatarSize = 64.dp,
-                colorScheme = colorScheme,
-                onContributorClick = { selectedContributor = it },
-                onContributorLongClick = onContributorLongClick,
-            )
-
-            CollaboratorsList(
-                contributors = AboutContributors.leads,
-                text = text,
-                title = text.leadsSection,
-                avatarSize = 64.dp,
-                colorScheme = colorScheme,
-                onContributorClick = { selectedContributor = it },
-                onContributorLongClick = onContributorLongClick,
-            )
-
-            CollaboratorsList(
-                contributors = AboutContributors.collaborators,
-                text = text,
-                colorScheme = colorScheme,
-                onContributorClick = { selectedContributor = it },
-                onContributorLongClick = onContributorLongClick,
-            )
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                color = colorScheme.surfaceContainerLow.copy(alpha = 0.82f),
+                tonalElevation = 1.dp,
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Text("CONTACT", style = MaterialTheme.typography.labelMedium, color = colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
+                    ContactRow("Instagram", "@4wlull_") { runCatching { uriHandler.openUri("https://instagram.com/4wlull_") } }
+                    ContactRow("TikTok", "AwalulBieber") { runCatching { uriHandler.openUri("https://www.tiktok.com/@AwalulBieber") } }
+                    ContactRow("Saluran", "Belum tersedia", enabled = false)
+                }
+            }
 
             Text(
-                text = text.licenseDescription,
-                style = MaterialTheme.typography.bodyMedium,
+                text = "Velora — dengarkan musik dengan cara kamu.",
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
                 color = colorScheme.onSurfaceVariant,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .clickable(role = Role.Button, onClickLabel = text.license) { openCommunityLink(aboutLicenseLink) }
-                        .padding(16.dp),
-            )
-
-            Text(
-                text = stringResource(Res.string.stands_with_palestine),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
             )
         }
     }
+}
 
-    selectedContributor?.let { contributor ->
-        AuthorInfoSheet(
-            contributor = contributor,
-            colorScheme = colorScheme,
-            onDismiss = { selectedContributor = null },
-            onOpenUrl = { url -> runCatching { uriHandler.openUri(url) } },
-        )
+@Composable
+private fun ContactRow(
+    label: String,
+    value: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {},
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .then(if (enabled) Modifier.clickable(onClick = onClick) else Modifier)
+            .padding(vertical = 13.dp, horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+        Text(value, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

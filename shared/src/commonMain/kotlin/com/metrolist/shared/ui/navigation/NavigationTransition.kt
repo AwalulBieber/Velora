@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.unit.Dp
+import com.metrolist.shared.settings.Settings
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 val LocalNavSharedTransitionScope = staticCompositionLocalOf<SharedTransitionScope?> { null }
@@ -93,7 +94,9 @@ class NavigationMotion internal constructor(
 fun rememberNavigationMotion(): NavigationMotion {
     val scheme = MaterialTheme.motionScheme
     val scale = rememberCoroutineScope().coroutineContext[MotionDurationScale]?.scaleFactor ?: 1f
-    return remember(scheme, scale) { NavigationMotion(scheme, scale > 0f) }
+    val veloraAnimationsEnabled = Settings.shared.veloraIosStyleAnimations
+    val enabled = scale > 0f && veloraAnimationsEnabled
+    return remember(scheme, scale, veloraAnimationsEnabled) { NavigationMotion(scheme, enabled) }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)

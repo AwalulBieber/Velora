@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -58,6 +59,7 @@ import com.metrolist.android.playback.resolveIncomingPlaybackSong
 import com.metrolist.android.playback.toAndroidContentHints
 import com.metrolist.android.ui.IncomingDestination
 import com.metrolist.android.ui.MetrolistApp
+import com.metrolist.android.ui.VeloraIntro
 import com.metrolist.android.ui.screens.settings.DiscordLoginFlow
 import com.metrolist.android.ui.theme.MetrolistTheme
 import com.metrolist.android.ui.toIncomingDestination
@@ -101,6 +103,20 @@ internal class NavigationRestorationViewModel(
 }
 
 class MainActivity : ComponentActivity() {
+    private fun applyVeloraRefreshRate(enabled: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        @Suppress("DEPRECATION")
+        val preferredRate =
+            if (enabled) {
+                windowManager.defaultDisplay.supportedModes.maxByOrNull { it.refreshRate }?.refreshRate ?: 0f
+            } else {
+                0f
+            }
+        window.attributes = window.attributes.apply {
+            preferredRefreshRate = preferredRate
+        }
+    }
+
     companion object {
         const val ACTION_SEARCH = "com.metrolist.music.action.SEARCH"
         const val ACTION_PLAYLIST_IMPORT = "com.metrolist.music.action.PLAYLIST_IMPORT"
@@ -275,6 +291,7 @@ class MainActivity : ComponentActivity() {
             Settings.shared.libraryFilter = LibraryFilterType.DEFAULT
         }
         setContent {
+            SideEffect { applyVeloraRefreshRate(Settings.shared.veloraHighRefreshRateEnabled) }
             val systemDensity = LocalDensity.current
             val windowSize = LocalWindowInfo.current.containerDpSize
             val safeInsets = WindowInsets.navigationBars.union(WindowInsets.displayCutout)
@@ -343,6 +360,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+                    VeloraIntro()
                 }
             }
         }

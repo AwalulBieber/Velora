@@ -71,6 +71,7 @@ import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -1483,8 +1484,12 @@ fun LyricsView(
                                                     }
 
                                                 Box(
-                                                    modifier = Modifier.fillMaxWidth().padding(bottom = LYRICS_ITEM_GAP_DP),
-                                                    contentAlignment = Alignment.Center,
+                                                    modifier =
+                                                        Modifier
+                                                            .fillMaxWidth()
+                                                            .blur(if (isActive) 0.dp else 4.dp)
+                                                            .padding(bottom = LYRICS_ITEM_GAP_DP),
+                                                    contentAlignment = Alignment.CenterStart,
                                                 ) {
                                                     CompositionLocalProvider(LocalLyricsAnimationVisible provides isVisible) {
                                                         InlineLyricsLine(
@@ -1509,7 +1514,7 @@ fun LyricsView(
                                                             isInteractive = isInteractive,
                                                             isSelected = selectedIndices.contains(idx),
                                                             isSelectionMode = isSelectionMode,
-                                                            alignment = lineAlignments[idx] ?: TextAlign.Start,
+                                                            alignment = TextAlign.Start,
                                                             hasMultipleSingers = hasMultipleSingers,
                                                             textSizeMultiplier = textSizeMultiplier,
                                                             textColor = textColor,
