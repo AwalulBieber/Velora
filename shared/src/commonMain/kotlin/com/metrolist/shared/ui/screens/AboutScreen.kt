@@ -139,7 +139,7 @@ fun AboutScreen(
         topBar = {
             if (onNavigateBack != null) {
                 LargeFlexibleTopAppBar(
-                    title = { Text("Tentang Velora") },
+                    title = { Text(stringResource(Res.string.app_name)) },
                     navigationIcon = {
                         IconButton(onClick = onNavigateBack, shapes = IconButtonDefaults.shapes()) {
                             Icon(MetrolistIcons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(Res.string.back))
@@ -217,7 +217,6 @@ fun AboutScreen(
                         Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
                             Text("AwalulBieber", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
                             Text("Developer Velora", style = MaterialTheme.typography.bodyMedium, color = colorScheme.onSurfaceVariant)
-                            Text("Foto profil menyusul", style = MaterialTheme.typography.labelSmall, color = colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -236,7 +235,6 @@ fun AboutScreen(
                     Text("CONTACT", style = MaterialTheme.typography.labelMedium, color = colorScheme.onSurfaceVariant, fontWeight = FontWeight.Bold)
                     ContactRow("Instagram", "@4wlull_") { runCatching { uriHandler.openUri("https://instagram.com/4wlull_") } }
                     ContactRow("TikTok", "AwalulBieber") { runCatching { uriHandler.openUri("https://www.tiktok.com/@AwalulBieber") } }
-                    ContactRow("Saluran", "Belum tersedia", enabled = false)
                 }
             }
 
