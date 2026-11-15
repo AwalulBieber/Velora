@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.metrolist.shared.db.HistoryStatisticsSnapshot
+import com.metrolist.shared.db.ListeningStreakStats
+import com.metrolist.shared.db.listeningStreakStats
 import com.metrolist.shared.db.MusicDatabase
 import com.metrolist.shared.db.historyChanges
 import com.metrolist.shared.db.historySong
@@ -64,6 +66,7 @@ internal fun MobileStatisticsScreen(
     var dateRange by remember { mutableStateOf<StatisticsDateRange?>(null) }
     var refreshKey by remember { mutableIntStateOf(0) }
     var snapshot by remember(database) { mutableStateOf<HistoryStatisticsSnapshot?>(null) }
+    var streakStats by remember(database) { mutableStateOf<ListeningStreakStats?>(null) }
     var isLoading by remember(database) { mutableStateOf(true) }
     var loadFailed by remember(database) { mutableStateOf(false) }
     LaunchedEffect(database, period, mode, dateRange, refreshKey) {
@@ -72,6 +75,7 @@ internal fun MobileStatisticsScreen(
             loadFailed = false
             try {
                 snapshot = database.loadMobileStatistics(period, dateRange = dateRange, mode = mode)
+                streakStats = database.listeningStreakStats()
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Exception) {
@@ -98,6 +102,7 @@ internal fun MobileStatisticsScreen(
                 errorMessage = if (loadFailed) stringResource(Res.string.statistics_load_failed) else null,
                 totalPlays = snapshot?.totals?.playCount ?: 0,
                 totalTimeMs = snapshot?.totals?.playTimeMs ?: 0L,
+                listeningStreak = streakStats,
                 artistCount = snapshot?.artists?.size ?: 0,
                 albumCount = topAlbums.size,
                 dailyStats = snapshot?.daily.orEmpty().associate { it.bucket to it.playCount },
