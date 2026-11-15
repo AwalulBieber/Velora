@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +45,7 @@ fun VeloraDynamicIsland(
     val artist = song.artists.firstOrNull()?.displayName.orEmpty()
     Surface(
         onClick = onExpand,
-        modifier = modifier.animateContentSize(spring(dampingRatio = 0.82f, stiffness = 650f)),
+        modifier = modifier.animateContentSize(spring(dampingRatio = 0.82f, stiffness = 650f)).widthIn(max = 340.dp),
         shape = RoundedCornerShape(if (expanded) 28.dp else 24.dp),
         color = Color(0xF20B0B0E),
         contentColor = Color.White,
