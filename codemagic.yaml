@@ -1,0 +1,28 @@
+workflows:
+  android-debug:
+    name: Velora Android Debug APK
+    instance_type: linux_x2
+    max_build_duration: 120
+    environment:
+      java: 25
+    scripts:
+      - name: Check Java toolchain
+        script: |
+          java -version
+      - name: Initialize repository submodules
+        script: |
+          git submodule update --init --recursive
+      - name: Install Android SDK components
+        script: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "platforms;android-37" "ndk;30.0.16248370"
+      - name: Build Velora debug APK
+        script: |
+          ./gradlew --no-daemon :androidApp:assembleDebug
+    artifacts:
+      - androidApp/build/outputs/apk/debug/*.apk
+    cache:
+      cache_paths:
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
+        - $ANDROID_HOME/ndk
